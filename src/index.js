@@ -2,9 +2,10 @@
 import express from 'express';
 import cookieParser from "cookie-parser";
 import cors from 'cors'; //para poder hacer puts, y tal desde el cliente al servidor
-import authRoutes from './routes/authRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import bookRoutes from './routes/bookRoutes.js';
+import authRouter from './routes/auth_routes.js';
+import bookRouter from './routes/book_routes.js';
+import pacienteRouter from './routes/paciente_routes.js'
+import miMedicamentoRouter from './routes/mi_medicamento_routes.js';
 import { testConnection } from './db.js';
 import dotenv from 'dotenv';
 import { insertInitialPacienteData } from './start_data.js';
@@ -31,9 +32,11 @@ await testConnection();
 await insertInitialPacienteData();
 
 // Configurar rutas
-app.use('/auth', authRoutes);
-app.use('/paciente', userRoutes);
-app.use('/book', bookRoutes);
+app.use('/auth', authRouter);
+app.use('/paciente', pacienteRouter);
+app.use('/book', bookRouter);
+app.use('/mi_medicamento', miMedicamentoRouter);
+
 
 // Iniciar el servidor
 app.listen(3000, () => {

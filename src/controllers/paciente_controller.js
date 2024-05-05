@@ -1,9 +1,9 @@
-import User from '../models/paciente_model.js';
+import Paciente from '../models/paciente_model.js';
 import { validationResult } from 'express-validator';
 //https://www.bezkoder.com/node-js-express-file-upload/
 
 
-export const getUserById = async (req, res) => {
+export const getPacienteById = async (req, res) => {
   try {
     const errors = validationResult(req);
 
@@ -15,25 +15,25 @@ export const getUserById = async (req, res) => {
     const { id } = req.params;
 
     // Buscar un usuario por su ID en la base de datos
-    const user = await User.findByPk(id).select('-password');
-    if (!user) {
+    const paciente = await Paciente.findByPk(id).select('-password');
+    if (!paciente) {
       return res.status(404).json({
         code: -6,
-        message: 'User Not Found'
+        message: 'Paciente Not Found'
       });
     }
 
     // Enviar una respuesta al cliente
     res.status(200).json({
       code: 1,
-      message: 'User Detail',
-      data: user
+      message: 'Paciente Detail',
+      data: paciente
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       code: -100,
-      message: 'An error occurred while obtaining the USER'
+      message: 'An error occurred while obtaining the PACIENTE'
     });
   }
 };
