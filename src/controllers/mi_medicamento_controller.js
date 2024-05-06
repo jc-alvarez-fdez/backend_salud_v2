@@ -10,7 +10,7 @@ export const getMisMedicamentos = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Obtener todos los usuarios de la base de datos
+    // Obtener todos los medicamentos de la base de datos
     const misMedicamentos = await MiMedicamento.findAll();
 
     // Enviar una respuesta al cliente
@@ -39,7 +39,7 @@ export const getMiMedicamentoById = async (req, res) => {
 
     const { id } = req.params;
 
-    // Buscar un usuario por su ID en la base de datos
+    // Buscar un medicamento por su ID en la base de datos
     const miMedicamento = await MiMedicamento.findByPk(id);
     if (!miMedicamento) {
       return res.status(404).json({
@@ -80,13 +80,13 @@ export const addMiMedicamento = async (req, res) => {
           num_registro: num_registro,
           laboratorio: laboratorio,
           triangulo_seguim: triangulo_seguim,
-          forma_simple:forma_simple,
-          via_administracion:via_administracion,
+          forma_simple: forma_simple,
+          via_administracion: via_administracion,
           prospecto: prospecto,
           paciente_id: req.paciente.id_paciente });
     } catch (error) {
-      // Si hay un error de duplicación de clave única (por ejemplo, título duplicado)
-      if (error.nombre === 'SequelizeUniqueConstraintError') {
+      // Si hay un error de duplicación de clave única (por ejemplo, nombre duplicado)
+      if (error.name === 'SequelizeUniqueConstraintError') {
         res.status(400).json({
           code: -61,
           message: 'Nombre de medicamento duplicado'
@@ -126,7 +126,7 @@ export const updateMiMedicamento = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { inicio_envase, contenido_envase } = req.body;
+    const { inicio_envase, contenido_envase, imagen, consejos } = req.body;
 
     // Buscar un usuario por su ID en la base de datos
     const miMedicamento = await MiMedicamento.findByPk(id);
@@ -140,6 +140,8 @@ export const updateMiMedicamento = async (req, res) => {
     // Actualizar los datos del medicamento 
     miMedicamento.inicio_envase = inicio_envase;
     miMedicamento.contenido_envase = contenido_envase;
+    miMedicamento.imagen = imagen;
+    miMedicamento.consejos = consejos;
     await miMedicamento.save();
 
     // Enviar una respuesta al cliente
@@ -152,7 +154,7 @@ export const updateMiMedicamento = async (req, res) => {
     console.error(error);
     res.status(500).json({
       code: -100,
-      message: 'Ha ocurrido un error al actualizar el medicamneto'
+      message: 'Ha ocurrido un error al actualizar el medicamento'
     });
   }
 };
@@ -168,21 +170,21 @@ export const deleteMiMedicamento = async (req, res) => {
 
     const { id } = req.params;
 
-    // Buscar un libro por su ID en la base de datos y eliminarlo
-    const deletedMiMedicamento = await MiMedicamento.destroy({ where: { id_miMedicamento: id } });
+    // Buscar un medicamento por su ID en la base de datos y eliminarlo
+    const deletedMiMedicamento = await MiMedicamento.destroy({ where: { id_medicamento: id } });
 
-    // Verificar si el libro fue encontrado y eliminado
+    // Verificar si el medicamento fue encontrado y eliminado
     if (!deletedMiMedicamento) {
       return res.status(404).json({
         code: -100,
-        message: 'MiMedicamento Not Found'
+        message: 'Medicamento no encontrado'
       });
      }
  
     // Enviar una respuesta al cliente
     res.status(200).json({
       code: 1,
-      message: 'Mi medicamento eliminado'
+      message: 'Medicamento eliminado'
     });
 
   } catch (error) {

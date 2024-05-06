@@ -56,11 +56,16 @@ const MiMedicamento = sequelize.define('02_medicamentos', {
     type: DataTypes.STRING(200),
     allowNull: true,
   },
-},{
+  status: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: 1
+  }
+},
+{
   indexes: [{ unique: true, fields: ['num_registro'] }],
-  timestamps: false, // Activa la creación automática de createdAt y updatedAt
-  //updatedAt: 'updated_at',
-  //createdAt: 'created_at'
+  timestamps: true, // Activa la creación automática de createdAt y updatedAt
+  updatedAt: 'updated_at',
+  createdAt: 'created_at'
 });
 Paciente.hasMany(MiMedicamento, { foreignKey: 'paciente_id' });
 MiMedicamento.belongsTo(Paciente, { foreignKey: 'paciente_id' });
