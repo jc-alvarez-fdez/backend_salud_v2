@@ -63,16 +63,20 @@ export const getMiMedicamentoById = async (req, res) => {
   }
 };
 
-export const addMiMedicamento = async (req, res) => {
+
+
+/* 
+//export const addMiMedicamento = async (req, res) => {
   try {
-    const errors = validationResult(req);
+   // const errors = validationResult(req);
 
     // Si hay errores de validación, responde con un estado 400 Bad Request
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { nombre, num_registro, laboratorio, triangulo_seguim, forma_simple, via_administracion, prospecto } = req.body;
+    //const { nombre, num_registro, laboratorio, triangulo_seguim, forma_simple, via_administracion, prospecto, title, year } = req.body;
+    const { title, year } = req.body;
     let newMiMedicamento;
     try {
         newMiMedicamento = await MiMedicamento.create({
@@ -83,14 +87,16 @@ export const addMiMedicamento = async (req, res) => {
           forma_simple: forma_simple,
           via_administracion: via_administracion,
           prospecto: prospecto,
+          title: title,
+          year: year,
           paciente_id: req.paciente.id_paciente });
     } catch (error) {
       // Si hay un error de duplicación de clave única (por ejemplo, nombre duplicado)
-      if (error.name === 'SequelizeUniqueConstraintError') {
+     if (error.num_registro === 'SequelizeUniqueConstraintError') {
         res.status(400).json({
           code: -61,
-          message: 'Nombre de medicamento duplicado'
-        });
+          message: 'Número de registro duplicado'
+        }); 
       }
     }
 
@@ -99,12 +105,12 @@ export const addMiMedicamento = async (req, res) => {
         code: -6,
         message: 'Error al añadir el medicamento'
       });
-    }
+    } 
 
     // Enviar una respuesta al cliente
     res.status(200).json({
       code: 1,
-      message: 'Medicamento añadido corrrectamente',
+      message: 'Medicamento añadido correctamente',
       data: newMiMedicamento
     });
   } catch (error) {
@@ -115,6 +121,29 @@ export const addMiMedicamento = async (req, res) => {
     });
   }
 };
+
+*/
+
+
+// Añadir medicamento
+export const addMiMedicamento = async (req, res) => {
+  const { body } = req;
+  try {
+      await MiMedicamento.create(body);
+
+      res.json({
+          msg: 'El medicamento se ha añadido',
+          body
+      });
+
+  } catch (error) {
+      console.log(error);
+      res.json({
+          msg: 'Ha ocurrido un error, póngase en contacto con soporte',
+      });
+  }
+}   
+
 
 export const updateMiMedicamento = async (req, res) => {
   try {

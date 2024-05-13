@@ -100,6 +100,8 @@ export const login = async (req, res) => {
     });
     res.setHeader('Set-Cookie', token);
 
+    console.log('Este es el cooki que genera el login: Set-Cookie', token)
+
     // Enviar una respuesta al cliente
     res.status(200).json({
       code: 1,

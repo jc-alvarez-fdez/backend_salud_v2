@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../db.js';
 
-const Paciente = sequelize.define('01_pacientes', {
+const Paciente = sequelize.define('pacientes', {
 
   id_paciente: {
     type: DataTypes.INTEGER(8).UNSIGNED,
