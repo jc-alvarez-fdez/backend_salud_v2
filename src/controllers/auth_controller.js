@@ -106,6 +106,7 @@ export const login = async (req, res) => {
     res.status(200).json({
       code: 1,
       message: 'Login OK',
+      token: `aquí el token: ${token}`,
       data: {
         paciente: {
           nombre: paciente.nombre,

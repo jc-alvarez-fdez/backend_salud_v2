@@ -11,6 +11,8 @@ import dotenv from 'dotenv';
 import { insertInitialPacienteData } from './start_data.js';
 import administracionesRouter from './routes/administracion_routes.js';
 
+import authenticateToken from './middlewares/authenticate_token.js';
+
 
 
 dotenv.config();
@@ -38,7 +40,7 @@ await insertInitialPacienteData();
 // Configurar rutas
 app.use('/auth', authRouter);
 app.use('/paciente', pacienteRouter);
-app.use('/book', bookRouter);
+app.use('/book', authenticateToken, bookRouter);
 app.use('/mis_medicamentos', misMedicamentosRouter);
 app.use('/administraciones', administracionesRouter);
 

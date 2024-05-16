@@ -2,7 +2,11 @@
 import jwt from 'jsonwebtoken';
 import Paciente from '../models/paciente_model.js';
 
+console.log('¡este es el archivo correcto');
+
 const authenticateToken = async (req, res, next) => {
+
+  console.log('pasa por el midleware')
   try {
     const { cookies } = req;
     const accessToken = cookies.token;
