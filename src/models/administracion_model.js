@@ -4,7 +4,7 @@ import MiMedicamento from './mi_medicamento_model.js';
 import Paciente from './paciente_model.js';
 
 
-const Administracion = sequelize.define('administraciones', {
+const Administracion = sequelize.define('Administraciones', {
 
   id_administracion: {
     type: DataTypes.INTEGER.UNSIGNED,

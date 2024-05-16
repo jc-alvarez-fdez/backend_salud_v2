@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../db.js';
 import Paciente from './paciente_model.js';
 
-const RecoveryToken = sequelize.define('recoverytokens', {
+const RecoveryToken = sequelize.define('RecoveryToken', {
   token: {
     type: DataTypes.STRING,
     allowNull: false,

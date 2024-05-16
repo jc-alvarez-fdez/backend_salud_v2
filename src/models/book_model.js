@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../db.js';
 import Paciente from './paciente_model.js';
 
-const Book = sequelize.define('books', {
+const Book = sequelize.define('Book', {
   id_book: {
     type: DataTypes.INTEGER(8).UNSIGNED,
     primaryKey: true,

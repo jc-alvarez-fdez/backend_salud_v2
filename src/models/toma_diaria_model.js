@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../db.js';
 import Administracion from './administracion_model.js'
 
-const TomaDiaria = sequelize.define('tomas_diarias', {
+const TomaDiaria = sequelize.define('TomaDiaria', {
 
   id_toma_diaria: {
     type: DataTypes.INTEGER(8),

@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../db.js';
 import TomaDiaria from './toma_diaria_model.js';
 
-const MotivoPerdida = sequelize.define('motivos_perdidas', {
+const MotivoPerdida = sequelize.define('MotivoPerdida', {
 
   id_motivo_perdida: {
     type: DataTypes.INTEGER(8),

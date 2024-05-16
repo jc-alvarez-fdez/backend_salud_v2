@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../db.js';
 import Paciente from './paciente_model.js'
 
-const MiMedicamento = sequelize.define('mis_medicamentos', {
+const MiMedicamento = sequelize.define('MiMedicamento', {
 
   id_medicamento: {
     type: DataTypes.INTEGER(8).UNSIGNED,
