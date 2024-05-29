@@ -1,7 +1,32 @@
 import Paciente from '../models/paciente_model.js';
 import { validationResult } from 'express-validator';
-//https://www.bezkoder.com/node-js-express-file-upload/
 
+export const getPacientes = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+
+    // Si hay errores de validación, responde con un estado 400 Bad Request
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Obtener todos los pacientes de la base de datos
+    const pacientes = await Paciente.findAll();
+
+    // Enviar una respuesta al cliente
+    res.status(200).json({
+      code: 1,
+      message: 'Lista de pacientes',
+      data: pacientes
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      code: -100,
+      message: 'Ha ocurrido un error al obtener la lista de pacientes',
+    });
+  }
+};
 
 export const getPacienteById = async (req, res) => {
   try {
@@ -14,87 +39,133 @@ export const getPacienteById = async (req, res) => {
 
     const { id } = req.params;
 
-    // Buscar un usuario por su ID en la base de datos
-    const paciente = await Paciente.findByPk(id).select('-password');
+    // Buscar un medicamento por su ID en la base de datos
+    const paciente = await Paciente.findByPk(id);
     if (!paciente) {
       return res.status(404).json({
         code: -6,
-        message: 'Paciente Not Found'
+        message: 'Paciente no encontrado'
       });
     }
 
     // Enviar una respuesta al cliente
     res.status(200).json({
       code: 1,
-      message: 'Paciente Detail',
+      message: 'Detalle del paciente',
       data: paciente
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       code: -100,
-      message: 'An error occurred while obtaining the PACIENTE'
+      message: 'Ha ocurrido un error al obtener el paciente'
     });
   }
 };
 
-export const uploadPhoto = async (req, res) => {
+
+
+// Añadir paciente (se realiza mediante el registro)
+export const addPaciente = async (req, res) => {
+  const { body } = req;
   try {
-    await uploadFile(req, res);
+      await Paciente.create(body);
 
-    if (req.file == undefined) {
-      return res.status(400).send({ message: "Please upload a file!" });
+      res.json({
+          msg: 'El paciente se ha añadido',
+          body
+      });
+
+  } catch (error) {
+      console.log(error);
+      res.json({
+          msg: 'Ha ocurrido un error, póngase en contacto con soporte',
+      });
+  }
+}   
+
+
+export const updatePaciente = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+
+    // Si hay errores de validación, responde con un estado 400 Bad Request
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    res.status(200).send({
-      message: "Uploaded the file successfully: " + req.file.originalname,
-    });
-  } catch (err) {
+    const { id } = req.params;
+    const { nombre, apellidos, fecha_nacimiento, dni,telefono, domicilio, cp, poblacion, provincia } = req.body;
 
-    if (err.code == "LIMIT_FILE_SIZE") {
-      return res.status(500).send({
-        message: "File size cannot be larger than 2MB!",
+    // Buscar un paciente por su ID en la base de datos
+    const paciente = await Paciente.findByPk(id);
+    if (!paciente) {
+      return res.status(404).json({
+        code: -3,
+        message: 'Paciente no encontrado'
       });
     }
-    console.log(req.file);
-    res.status(500).send({
-      message: `Could not upload the file: ${req.file.originalname}. ${err}`,
+
+    // Actualizar los datos del paciente 
+    paciente.nombre = nombre;
+    paciente.apellidos = apellidos;
+    paciente.fecha_nacimiento = fecha_nacimiento;
+    paciente.dni = dni;
+    paciente.telefono = telefono;
+    paciente.domicilio = domicilio;
+    paciente.cp = cp;
+    paciente.poblacion = poblacion;
+    paciente.provincia = provincia;
+    await paciente.save();
+
+    // Enviar una respuesta al cliente
+    res.status(200).json({
+      code: 1,
+      message: 'Paciente actualizado',
+      data: paciente
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      code: -100,
+      message: 'Ha ocurrido un error al actualizar el paciente'
     });
   }
 };
 
-export const getListFiles = (req, res) => {
-  const directoryPath = process.env.BASE_DIR + "/resources/static/assets/uploads/";
+export const deletePaciente = async (req, res) => {
+  try {
+    const errors = validationResult(req);
 
-  fs.readdir(directoryPath, function (err, files) {
-    if (err) {
-      res.status(500).send({
-        message: "Unable to scan files!",
-      });
+    // Si hay errores de validación, responde con un estado 400 Bad Request
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    let fileInfos = [];
+    const { id } = req.params;
 
-    files.forEach((file) => {
-      fileInfos.push({
-        name: file,
-        url: baseUrl + file,
+    // Buscar un paciente por su ID en la base de datos y eliminarlo
+    const deletedPaciente = await Paciente.destroy({ where: { id_paciente: id } });
+
+    // Verificar si el paciente fue encontrado y eliminado
+    if (!deletedPaciente) {
+      return res.status(404).json({
+        code: -100,
+        message: 'Paciente no encontrado'
       });
+     }
+ 
+    // Enviar una respuesta al cliente
+    res.status(200).json({
+      code: 1,
+      message: 'Paciente eliminado'
     });
 
-    res.status(200).send(fileInfos);
-  });
-};
-
-export const downloadPhoto = (req, res) => {
-  const fileName = req.params.name;
-  const directoryPath = process.env.BASE_DIR + "/resources/static/assets/uploads/";
-
-  res.download(directoryPath + fileName, fileName, (err) => {
-    if (err) {
-      res.status(500).send({
-        message: "Could not download the file. " + err,
-      });
-    }
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      code: -100,
+      message: 'Ha ocurrido un error al eliminar el paciente'
+    });
+  }
 };

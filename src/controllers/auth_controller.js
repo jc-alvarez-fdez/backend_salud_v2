@@ -13,6 +13,65 @@ const clientURL = process.env.CLIENT_URL;
 
 export const register = async (req, res) => {
   try {
+    const errors = validationResult(req);
+
+    // Si hay errores de validación, responde con un estado 400 Bad Request
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+   
+    const { email, password, nombre, apellidos } = req.body;
+    // Verificar si ya existe un usuario con el mismo correo electrónico
+    const existingPaciente = await Paciente.findOne({ where: { email }});
+    if (existingPaciente) {
+      return res.status(400).json({
+        code: -2,
+        message: 'Ya existe un usuario con el mismo correo electrónico'
+      });
+    }
+    // Crear un nuevo usuario
+    const hashedPassword = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
+    const newPaciente = new Paciente({ email, password: hashedPassword, nombre, apellidos, status: 1 });
+    await newPaciente.save();
+
+    // Generar un token de acceso y lo guardo en un token seguro (httpOnly)
+    const accessToken = jwt.sign({ id_paciente: newPaciente.id_paciente, nombre: newPaciente.nombre }, process.env.JWT_SECRET);
+    const token = serialize('token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 30,
+      path: '/',
+    });
+    res.setHeader('Set-Cookie', token);
+
+    // Enviar una respuesta al cliente incluyendo los datos del paciente
+    res.status(200).json({
+      code: 1,
+      message: 'Usuario registrado correctamente',
+      data: {
+        paciente: {
+          id_paciente: newPaciente.id_paciente,
+          nombre: newPaciente.nombre,
+          apellidos: newPaciente.apellidos,
+          email: newPaciente.email
+        }
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      code: -100,
+      message: 'Ha ocurrido un error al registrar el usuario',
+      error: error,
+    });
+  }
+};
+
+
+/* Anterior register
+export const register = async (req, res) => {
+  try {
 
     const errors = validationResult(req);
 
@@ -61,6 +120,8 @@ export const register = async (req, res) => {
   }
 };
 
+*/
+
 export const login = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -106,9 +167,10 @@ export const login = async (req, res) => {
     res.status(200).json({
       code: 1,
       message: 'Login OK',
-      token: `aquí el token: ${token}`,
+      //token: `aquí el token: ${token}`,
       data: {
         paciente: {
+          id_paciente: paciente.id_paciente,
           nombre: paciente.nombre,
           apellidos: paciente.apellidos,
           email: paciente.email

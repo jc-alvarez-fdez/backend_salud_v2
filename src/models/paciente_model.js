@@ -10,19 +10,19 @@ const Paciente = sequelize.define('Paciente', {
   },
   nombre: {
     type: DataTypes.STRING(150),
-    allowNull: false,
+    allowNull: true,
   },
   apellidos: {
     type: DataTypes.STRING(150),
-    allowNull: false,
+    allowNull: true,
   },
   fecha_nacimiento: {
     type: DataTypes.DATE,
-    allowNull: true,
+    //allowNull: true,
   },
   dni: {
     type: DataTypes.STRING(15),
-    allowNull: true,
+    //allowNull: true,
   },
   telefono: {
     type: DataTypes.STRING(20),
@@ -53,7 +53,7 @@ const Paciente = sequelize.define('Paciente', {
     allowNull: false,
   },
 },{
-  indexes: [{ unique: true, fields: ['email', 'dni'] }],
+  indexes: [{ unique: true, fields: ['email'] }],
   timestamps: true, // Activa la creación automática de createdAt y updatedAt
   createdAt: 'created_at',
   updatedAt: 'updated_at'

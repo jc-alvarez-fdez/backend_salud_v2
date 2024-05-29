@@ -6,11 +6,11 @@ console.log('¡este es el archivo correcto');
 
 const authenticateToken = async (req, res, next) => {
 
-  console.log('pasa por el midleware')
-  try {
+  console.log('pasa por el middleware')
+try {
     const { cookies } = req;
     const accessToken = cookies.token;
-
+  
     if (!accessToken) {
       return res.status(401).json({
         code: -50,
@@ -27,7 +27,7 @@ const authenticateToken = async (req, res, next) => {
       });
     }
 
-    req.paciente = paciente;
+    req.paciente = paciente; 
     next();
   } catch (error) {
     console.error(error);
@@ -35,7 +35,7 @@ const authenticateToken = async (req, res, next) => {
       code: -100,
       message: 'Ha ocurrido un error al autenticar el token de acceso'
     });
-  }
+  } 
 };
 
 export default authenticateToken;
